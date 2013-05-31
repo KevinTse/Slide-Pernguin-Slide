@@ -336,7 +336,7 @@
 
                         if (distanceToMoveVertically < 0)
                         {
-                            if (block.style.backgroundImage != "url(" + localhost + "/img/EvilPenguinUp.png)")
+                            if (block.style.backgroundImage != "url(/img/EvilPenguinUp.png)")
                             {
                                 block.style.backgroundImage = "url(/img/EvilPenguinUp.png)";
 
@@ -345,7 +345,7 @@
                         }
                         else 
                         {
-                            if (block.style.backgroundImage != "url(" + localhost + "/img/EvilPenguinDown.png)")
+                            if (block.style.backgroundImage != "url(/img/EvilPenguinDown.png)")
                             {
                                 block.style.backgroundImage = "url(/img/EvilPenguinDown.png)";
                             }                         
@@ -702,10 +702,6 @@
             var evilPenguinUpside = false;
             var evilPenguinDownside = false;
 
-			
-            
-            var localhost = "http://10.10.10.160:8888";
-            //var localhost = "file:///C:/Users/KevinTse/Desktop/website-dir";
             </script>
 			
 			<div class="app-page" data-page="game" id="game">
@@ -859,7 +855,7 @@
                                 {
                                     if (parseInt(walkingImg.css("left")) >= 5)
                                     {
-                                        walkingImg.attr("src", localhost + "/img/PenguinSideLeft.png");
+                                        walkingImg.attr("src", "/img/PenguinSideLeft.png");
                                         walkingImg.css("left", parseInt(walkingImg.css("left")) - 5 +"px");
                                         checkCollision();
                                     }
@@ -868,7 +864,7 @@
 
                     temp.on("touchend",function()
                     {
-                        walkingImg.attr("src", localhost + "/img/PenguinFront.png");
+                        walkingImg.attr("src", "/img/PenguinFront.png");
                         clearInterval(left);
                     });
 
@@ -880,7 +876,7 @@
                                 {
                                     if (parseInt(walkingImg.css("left")) + parseInt(walkingImg.css("width")) <= window.innerWidth*0.75 -5)
                                     {
-                                        walkingImg.attr("src", localhost + "/img/PenguinSideRight.png");
+                                        walkingImg.attr("src", "/img/PenguinSideRight.png");
                                         walkingImg.css("left", parseInt(walkingImg.css("left")) + 5 +"px");
                                         checkCollision();
                                     }
@@ -889,7 +885,7 @@
 
                     temp.on("touchend",function()
                     {
-                        walkingImg.attr("src", localhost + "/img/PenguinFront.png");
+                        walkingImg.attr("src", "/img/PenguinFront.png");
                         clearInterval(right);
                     });
 
