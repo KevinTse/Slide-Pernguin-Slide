@@ -96,19 +96,8 @@
                 if (switchBlock > 100)
                 {
                     switchBlock-=100;
-                    if (count > 1000)
-                    {
-                        type = Math.floor(Math.random()*6);
-                    } 
-                    else
-                    {
-                        type = Math.floor(Math.random()*3);
-                    }
+                    type = Math.floor(Math.random()*3);
                 } 
-                if (count > 1000)
-                {
-                    type = Math.random()*5;
-                }
 
                 if (previoustype != type)
                 {
@@ -132,25 +121,6 @@
                     clearInterval(spawnWallBlock);
                     createFollowBlock();
                 }
-                else if (type == 3)
-                {
-                    clearInterval(spawnFollowBlock);
-                    createRandomBlock();
-                    createWallBlock();
-                }
-                else if (type == 4)
-                {
-                    clearInterval(spawnWallBlock);
-                    createRandomBlock();
-                    createFollowBlock();
-                }
-                else if (type == 5)
-                {
-                    clearInterval(spawnRandomBlock);
-                    createFollowBlock();
-                    createWallBlock();
-                }
-
             }
 
             // Create random blocks everywhere
