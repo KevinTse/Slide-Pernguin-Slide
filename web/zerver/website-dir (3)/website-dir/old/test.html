@@ -1,0 +1,129 @@
+<html>
+    <head>
+        
+        <script>
+            
+            function mOver(obj)
+            {
+                //obj.src = "http://campuswellbeing.files.wordpress.com/2011/10/cute-puppies-with-worms.jpg";
+                start = new Date().getTime();
+                
+                timer = setInterval(function()
+                                    {
+                                    elapsed = 0;
+                                    var time = new Date().getTime() - start;
+                                    elapsed = Math.floor(time / 100) / 10;
+                                    if(Math.round(elapsed) == elapsed) { elapsed += '.0'; }
+                                    if (highscore < elapsed)
+                                    {
+                                    highscore = elapsed;
+                                    }
+                                    document.getElementById("scoreBoard").innerHTML = "elaped: " + elapsed + " Highscore: " + highscore;
+                                    }, 100);
+                
+            }
+            function mOut(obj)
+            {
+                document.getElementById("scoreBoard").innerHTML = "elaped: " + elapsed + " Highscore: " + highscore;
+                elapsed = 0.0;
+                start = 0.0;
+                clearInterval(timer);
+                //obj.src = "http://www.winnipeghumanesociety.ca/images/cute-puppy.jpg";
+            }
+            
+            </script>
+        
+        
+        <style>
+            #touch-me {
+                z-index: 1;
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+            }
+            
+            .point {
+                z-index: 2;
+                position: absolute;
+                margin: -12px 0 0 -12px;
+                height: 25px;
+                width: 25px;
+                background: #000;
+                border-radius: 12px;
+            }
+            </style>
+        
+        
+        
+        
+    </head>
+    <script src="/zerver/require.js"></script>
+    <script>
+        var MyAPI = require('MyAPI');
+        MyAPI.logStuff('hi from client', function (str) {
+                       console.log(str); // "hi from server"
+                       });
+        </script>
+    
+    <body>
+        
+        <script src="/zerver/MyAPI.js"></script>
+        <script src="/touchy.js"></script>
+        <script>
+            function write (str) {
+                document.documentElement.appendChild(
+                                                     document.createTextNode(str)
+                                                     );
+            }
+            MyAPI.getStuff('Hello from browser', function (str) {
+                           write(str);
+                           }).error(function (err) {
+                                    write('ERROR: ' + err);
+                                    });
+            </script>
+        
+        
+        <script>
+            var timer;
+            var count = 0;
+            var smile = true;
+            var highscore = 0;
+            </script>
+        
+        <p>
+        PUPPY
+        </p>
+        
+        <p>
+        <img id="smily" onmouseover="mOver(self)" onmouseout="mOut(self)" width="50px" height="50px" src="http://www.winnipeghumanesociety.ca/images/cute-puppy.jpg">
+            </p>
+            
+            <button id="holdMe"> Hold Me </button>
+            
+            <p id="scoreBoard">O_O</p>
+            
+            
+            <script>
+                //Touchy.stopWindowBounce();
+                
+                var touchMe = document.getElementById('touch-me');
+                
+                function drawPoint (point) {
+                    var elem = document.createElement('div');
+                    elem.className = 'point';
+                    elem.style.top = point.y + 'px';
+                    elem.style.left = point.x + 'px';
+                    touchMe.appendChild(elem);
+                }
+                
+                Touchy(touchMe, true, function (hand, finger) {
+                       finger.on('start', drawPoint);
+                       finger.on('move' , drawPoint);
+                       finger.on('end'  , drawPoint);
+                       });
+                </script>
+            
+    </body>
+</html>

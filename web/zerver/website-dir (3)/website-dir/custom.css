@@ -1,0 +1,102 @@
+            html,body {
+
+                position: : relative;
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+            }
+
+            #home {
+                position: absolute;
+                top: 0%;
+                left: 0%;
+                width: 100%;
+                height: 100%;
+            }
+
+            #game {
+                position: absolute;
+				background-image: url('file:///C:/Users/KevinTse/Desktop/website-dir/images/gameboard.jpg');
+                top: 0%;
+                left: 0%;
+                width: 100%;
+                height: 100%;
+            }
+
+            #gameinfo {
+                position: absolute;
+				top: 0%;
+                left: 75%;
+                width: 25%;
+                height: 75%;
+            }
+
+            #touch-me {
+                position: absolute;
+                top: 75%;
+                left: 75%;
+                width: 25%;
+                height: 25%;
+            }
+
+            #gameboard {
+                position: absolute;
+				background-image: url('file:///C:/Users/KevinTse/Desktop/website-dir/images/gameboard.jpg');
+                left: 0;
+                top: 0;
+                width: 75%;
+                height: 100%;
+            }
+
+            #control {
+                position: absolute;
+                background-size: 100%;
+                left: 0;
+                top: 75%;
+                width: 100%;
+                height: 25%;
+            }
+
+            #left {
+                position: absolute;
+                background-image: url('file:///C:/Users/KevinTse/Desktop/website-dir/images/l_arrow.png');
+				background-size:100% 100%;
+				background-repeat:no-repeat;
+                left: 0;
+                top: 0;
+                width: 25%;
+                height: 100%;
+            }
+
+            #right {
+                position: absolute;
+                background-image: url('file:///C:/Users/KevinTse/Desktop/website-dir/images/r_arrow.png');
+				background-size:100% 100%;
+				background-repeat:no-repeat;
+                left: 75%;
+                top: 0;
+                width: 25%;
+                height: 100%;
+            }
+
+            #up {
+                position: absolute;
+                background-image: url('file:///C:/Users/KevinTse/Desktop/website-dir/images/u_arrow.png');
+				background-size:100% 100%;
+				background-repeat:no-repeat;
+                left: 25%;
+                top: 0;
+                width: 50%;
+                height: 50%;
+            }
+
+            #down {
+                position: absolute;
+                background-image: url('file:///C:/Users/KevinTse/Desktop/website-dir/images/d_arrow.png');
+				background-size:100% 100%;
+				background-repeat:no-repeat;
+                left: 25%;
+                top: 50%;
+                width: 50%;
+                height: 50%;
+            }

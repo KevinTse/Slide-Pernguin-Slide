@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+        <head>
+                <title>Touchy Demos - Basic</title>
+        
+                <meta content="yes" name="apple-mobile-web-app-capable">
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+                
+                <style>
+                #touch-me {
+                        position: absolute;
+                    }
+                </style>
+                
+                <script>
+                function mOver ()
+                {
+                                start = new Date().getTime();
+                
+                timer = setInterval(function()
+                {
+                var walkingImg = document.getElementById("walk").src;
+                if (walkingImg == localhost + "/images/walk1.png")
+                {
+                document.getElementById("walk").src = "/images/walk2.png";
+                document.getElementById("walkSrc").innerHTML = walkingImg;
+                }
+                else if (walkingImg == localhost + "/images/walk2.png")
+                {
+                document.getElementById("walk").src = "/images/walk4.png";
+                document.getElementById("walkSrc").innerHTML = walkingImg;
+                }
+                else if (walkingImg == localhost + "/images/walk3.png")
+                {
+                document.getElementById("walk").src = "/images/walk4.png";
+                document.getElementById("walkSrc").innerHTML = walkingImg;
+                }
+                else if (walkingImg == localhost + "/images/walk4.png")
+                {
+                document.getElementById("walk").src = "/images/walk2.png";
+                document.getElementById("walkSrc").innerHTML = walkingImg;
+                }
+                
+                elapsed = 0;
+                var time = new Date().getTime() - start;
+                elapsed = Math.floor(time / 100) / 10;
+                if(Math.round(elapsed) == elapsed) { elapsed += '.0'; }
+                if (highscore < elapsed)
+                    {
+                    highscore = elapsed;
+                    }
+                    document.getElementById("scoreBoard").innerHTML = "elaped: " + elapsed + " Highscore: " + highscore;
+                    }, 200);
+                    }
+                    
+                    function moves()
+                    {
+                    count++;
+                    document.getElementById("counts").innerHTML = "Count: " + count;
+                    }
+                    
+                    function mOut()
+                    {
+                    document.getElementById("scoreBoard").innerHTML = "elaped: " + elapsed + " Highscore: " + highscore;
+                    elapsed = 0.0;
+                    start = 0.0;
+                    clearInterval(timer);
+                    document.getElementById("walk").src = "/images/walk1.png";
+                    
+                    }
+                </script>
+                
+    </head>
+    
+        <body>
+        
+        <script>
+            var timer;
+            var count = 0;
+            var highscore = 0;
+            var localhost = "http://10.10.10.160:8888"
+        </script>
+        
+        <p id="scoreBoard">O_O</p>
+        <p id="counts">O_O</p>
+        <p id="screenWidth"> WIDTH</p>
+        <p id="screenHeight"> HEIGHT</p>
+        <script>
+            document.getElementById("screenWidth").innerHTML = window.innerWidth;
+            document.getElementById("screenHeight").innerHTML = window.innerHeight;
+        </script>
+        <p>
+        <img id="walk" src="/images/walk1.png">
+        </p>
+        <p id="walkSrc">Walking</p>
+                <div id="touch-me">
+            
+        </div>
+            <div id="touch-me2" style="background-color:#EEEEEE;height:200px;width:200;float:left:200;">
+                Content goes here</div>
+        <script>
+            var touchMe = document.getElementById("touch-me");
+            touchMe.style.backgroundColor = 'red';
+            touchMe.style.width = '50%';
+            touchMe.style.height = '50%';
+            touchMe.style.top = '20';
+            touchMe.style.left = '200';
+        </script>
+        
+        <div id="touch-me2" style="top:200px;left:200px;backgroundColor:blue;width:200;height:200"></div>
+            
+                <script src="/touchy.js"></script>
+                <script>
+                        Touchy.stopWindowBounce();
+            
+                        var touchMe = document.getElementById('touch-me');
+            
+                        Touchy(touchMe, true, function (hand, finger) {
+                   if (hand.fingers.length > 1) {
+                   return;
+                   }
+                   
+                   finger.on('start', mOver);
+                   finger.on('move', moves);
+                   finger.on('end'  , mOut);
+                   });
+            </script>
+        </body>
+</html>

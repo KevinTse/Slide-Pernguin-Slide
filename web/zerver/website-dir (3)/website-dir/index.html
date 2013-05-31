@@ -1,0 +1,805 @@
+<!doctype html>
+<html>
+    <head>
+        
+        <title> Endless Runner </title>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            
+            <style>
+                body {
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                }
+            </style>
+        
+        
+        <link rel="stylesheet" href="custom.css">
+        <script>
+                        
+            function startGame()
+            {
+                resetGame();
+                lives = 3;
+                bombs = 3;
+                speed = 100;
+                timer = setInterval(function()
+                                    {
+                                    document.getElementById("score").innerHTML = "Score: " + Math.floor(count);
+                                    document.getElementById("lives").innerHTML = "Lives: " + lives;
+                                    document.getElementById("bombs").innerHTML = "Bombs: " + bombs;
+                                    moveBackground();
+                                    },10);
+            }
+            
+            function resetGame()
+            {
+                count = 0.0
+                start = 0.0;
+                lives = 0;
+                bombs = 0;
+
+                blocksSpawnPoint = -10;
+                started = false;
+
+                var winW = 0;;
+                var winH = 0;
+                
+                winW = window.innerWidth;
+                winH = window.innerHeight;
+                walkingImg.style.top = ((winH*0.75)-parseInt(walkingImg.style.height))+"px";
+                walkingImg.style.left = ((winW*0.75/2)-parseInt(walkingImg.style.width)/2)+"px";
+                
+                clearInterval(timer);
+                clearInterval(moveingBlock);
+                clearInterval(spawnRandomBlock);
+                clearInterval(spawnWallBlock);
+                clearInterval(spawnFollowBlock);
+
+                document.getElementById("score").innerHTML = "Score: 0";
+                document.getElementById("speed").innerHTML = "Speed: 0";
+                document.getElementById("lives").innerHTML = "Lives: 0";
+                document.getElementById("bombs").innerHTML = "Bombs: 0";
+            }
+            
+            function changeDifficulty()
+            {
+                if (count > 250)
+                {
+                    speed = 90;
+                }
+                if (count > 500)
+                {
+                    speed = 80;
+                }
+                if (count > 750)
+                {
+                    speed = 70;
+                }
+                if (count > 1000)
+                {
+                    speed = 60;
+                }
+                if (count > 1250)
+                {
+                    speed = 50;
+                }
+                if (count > 1500)
+                {
+                    speed = 40;
+                }
+                if (count > 1750)
+                {
+                    speed = 30;
+                }
+                if (count > 2000)
+                {
+                    speed = 25;
+                }
+            }
+
+            /* Block Functions */
+
+            function typeBlock()
+            {
+                var previoustype = type;
+                type = Math.floor(count/100)%3;
+                if (previoustype != type)
+                {
+                    blocksSpawnPoint-=150;
+                }
+                if (type == 0)
+                {
+                    clearInterval(spawnWallBlock);
+                    clearInterval(spawnFollowBlock);
+                    createRandomBlock();
+                }
+                else if (type == 1)
+                {
+                    clearInterval(spawnRandomBlock);
+                    clearInterval(spawnFollowBlock);
+                    createWallBlock();
+                }
+                else if (type == 2)
+                {
+                    clearInterval(spawnRandomBlock);
+                    clearInterval(spawnWallBlock);
+                    createFollowBlock();
+                }
+
+            }
+
+            // Create random blocks everywhere
+            function createRandomBlock()
+            {
+                var gameblock = document.getElementById("gameboard");
+                var block = document.createElement("div");
+                block.style.position = "absolute";
+                block.id = "block" + numBlock;
+                numBlock++;
+				block.style.backgroundImage = "url(file:///C:/Users/KevinTse/Desktop/website-dir/images/snowball.png)";
+				block.style.backgroundSize = "100% 100%"
+				
+                var x = Math.floor(Math.random()*(window.innerWidth*0.75));
+                  
+                block.style.marginLeft = x - 10 + "px";
+                block.style.marginTop = blocksSpawnPoint + "px";
+                block.style.width =  "10px";
+                block.style.height =  "10px";
+                
+                blocksSpawnPoint = blocksSpawnPoint - 80;
+                
+                gameblock.appendChild(block);
+                
+                clearInterval(spawnRandomBlock);
+                spawnRandomBlock = setInterval(function()
+                {  
+                        if(blocksSpawnPoint >= -300)
+                        {
+                            typeBlock();
+                        }
+                },Math.abs(50));
+            }
+
+            // Create blocks such that theres only one hole for the character
+            function createWallBlock()
+            {
+
+                var gameblock = document.getElementById("gameboard");
+
+                var block = document.createElement("div");
+                block.style.position = "absolute";
+                block.id = "wallblock" + numWallBlock;
+                numWallBlock++;
+
+                block.style.backgroundColor = "purple";
+
+                var x = Math.floor(Math.random()*(window.innerWidth*0.75 - 80));
+                block.style.marginLeft = "0px";
+                block.style.marginTop = blocksSpawnPoint + "px";
+                block.style.width = x + "px";
+                block.style.height =  "50px";
+                
+                var block2 = document.createElement("div");
+                block2.style.position = "absolute";
+                block2.id = "wallblock" + numWallBlock;
+                numWallBlock++;
+
+                block2.style.backgroundColor = "purple";
+
+                var y = x + 80;
+                block2.style.marginLeft = y +"px";
+                block2.style.marginTop = blocksSpawnPoint + "px";
+                block2.style.width =  (window.innerWidth*0.75 - y) + "px";
+                block2.style.height =  "50px";
+                
+                gameblock.appendChild(block2);
+                gameblock.appendChild(block);
+
+                blocksSpawnPoint-=200;
+
+                clearInterval(spawnWallBlock);
+                spawnWallBlock = setInterval(function()
+                {  
+                        if(blocksSpawnPoint >= -300)
+                        {
+                            typeBlock();
+                        }
+                },Math.abs(50));
+
+                
+            }
+
+            function createFollowBlock()
+            {
+                var gameblock = document.getElementById("gameboard");
+                var walkingImg = document.getElementById("walk");
+
+                var block = document.createElement("div");
+                block.time = "100";
+                block.style.position = "absolute";
+                block.id = "followblock" + numFollowBlock;
+                numFollowBlock++;
+
+                block.style.backgroundColor = "pink";
+
+                block.style.marginLeft = "0px";
+                block.style.marginTop = blocksSpawnPoint + "px";
+                block.style.width = parseInt(walkingImg.style.width) + "px";
+                block.style.height = parseInt(walkingImg.style.height)  +"px";
+
+                gameblock.appendChild(block);
+
+                blocksSpawnPoint-=300;
+
+                clearInterval(spawnFollowBlock);
+                spawnFollowBlock = setInterval(function()
+                {  
+                        if(blocksSpawnPoint >= -300)
+                        {
+                            typeBlock();
+                        }
+                },Math.abs(50));
+            }
+            
+            function moveBlock()
+            {
+                for (var i = deletedBlock;i<numBlock;i++)
+                {
+                    var walkingImg = document.getElementById("walk");
+                    var block= document.getElementById("block"+i);
+                    block.style.marginTop = parseInt(block.style.marginTop) + 10 +"px";
+                    // If the block leaves the screen then remove it
+                    if (parseInt(block.style.marginTop) > window.innerHeight)
+                    {
+                        block.parentNode.removeChild(block);
+                        deletedBlock++;
+                    }
+                }
+
+
+                for (var i = deletedWallBlock;i<numWallBlock;i++)
+                {
+
+                    var walkingImg = document.getElementById("walk");
+
+                    var block= document.getElementById("wallblock"+i);
+
+                    block.style.marginTop = parseInt(block.style.marginTop) + 10 +"px";
+
+                    // If the block leaves the screen then remove it
+                    if (parseInt(block.style.marginTop) > window.innerHeight)
+                    {
+                        block.parentNode.removeChild(block);
+                        deletedWallBlock++;
+                    }
+                }
+
+                for (var i = deletedFollowBlock;i<numFollowBlock;i++)
+                {
+
+                    var walkingImg = document.getElementById("walk");
+
+                    var block= document.getElementById("followblock"+i);
+                    var distanceToMoveVertically;
+                    var distanceToMoveHoriztonally;
+
+                    if (parseInt(block.time) > 0)
+                    {
+                        // Some logic to make block move towards character
+                        var verticalDistanceToChar = parseInt(walkingImg.style.top) - parseInt(block.style.marginTop);
+                        var horizontalDistanceToChar = parseInt(walkingImg.style.left) - parseInt(block.style.marginLeft);
+                        var riseOverRun = Math.abs(verticalDistanceToChar/horizontalDistanceToChar);
+
+                        movementToCharacter = Math.sqrt(25/(riseOverRun+1));
+
+                        distanceToMoveVertically = movementToCharacter*riseOverRun;
+                        distanceToMoveHoriztonally = movementToCharacter;
+
+                        if (Math.abs(horizontalDistanceToChar) < 25)
+                        {
+                            distanceToMoveVertically = 5;
+                        }
+
+                        if (verticalDistanceToChar < 0)
+                        {
+                            distanceToMoveVertically = -distanceToMoveVertically;
+                        }
+                        if (horizontalDistanceToChar < 0)
+                        {
+                            distanceToMoveHoriztonally = -distanceToMoveHoriztonally;
+                        }
+                        block.time = parseInt(block.time)- 1;
+                    }
+                    else
+                    {
+                        distanceToMoveVertically = 25;
+                        distanceToMoveHoriztonally = 0;
+
+                    }
+
+                    block.style.marginTop = parseInt(block.style.marginTop) + distanceToMoveVertically + "px";
+                    block.style.marginLeft = parseInt(block.style.marginLeft) + distanceToMoveHoriztonally + "px";
+
+                    // If the block leaves the screen then remove it
+                    if (parseInt(block.style.marginTop) > window.innerHeight)
+                    {
+                        block.parentNode.removeChild(block);
+                        deletedFollowBlock++;
+                    }
+                }
+
+                count++;
+                changeDifficulty();
+
+                backgroundValue+= 10;
+
+                checkCollision();
+
+                document.getElementById("spawn").innerHTML = blocksSpawnPoint;
+
+                blocksSpawnPoint+=10;
+                clearInterval(moveingBlock)
+                moveingBlock = setInterval(function()
+                {  
+                    moveBlock();
+                },speed);
+            }
+            
+            function removeAllBlock()
+            {
+                for (var i = deletedBlock;i<numBlock;i++)
+                {
+                    var block = document.getElementById("block"+i);
+                    block.parentNode.removeChild(block);
+                }
+
+                for (var i = deletedWallBlock;i<numWallBlock;i++)
+                {
+                    var block= document.getElementById("wallblock"+i);
+                    block.parentNode.removeChild(block);
+                }
+
+                for (var i = deletedFollowBlock;i<numFollowBlock;i++)
+                {
+                    var block= document.getElementById("followblock"+i);
+                    block.parentNode.removeChild(block);
+                }
+
+                numBlock = 0;
+                deletedBlock = 0;
+                numWallBlock = 0;
+                deletedWallBlock = 0;
+                numFollowBlock = 0;
+                deletedFollowBlock = 0;
+                blocksSpawnPoint = -200;
+            }
+
+
+            /* Collisions and hit */
+            
+            function checkCollision()
+            {
+                if (!invincible)
+                {
+                    for (var i = deletedBlock;i<numBlock;i++)
+                    {
+                        var block= document.getElementById("block"+i);
+
+                        //Block property
+                        var blockLeft = parseInt(block.style.marginLeft);
+                        var blockTop = parseInt(block.style.marginTop);
+                        var blockRight = parseInt(block.style.marginLeft) + parseInt(block.style.width) ;
+                        var blockBottom = parseInt(block.style.marginTop) + parseInt(block.style.height);
+                        
+                        //Char property
+                        var charLeft = parseInt(walkingImg.style.left);
+                        var charTop = parseInt(walkingImg.style.top);
+                        var charRight = parseInt(walkingImg.style.left) + parseInt(walkingImg.style.width) ;
+                        var charBottom = parseInt(walkingImg.style.top) + parseInt(walkingImg.style.height);
+                        // Checks hit char edges his block
+                        if ((blockBottom >= charTop && charTop >= blockTop) || (blockTop <= charBottom && charBottom <= blockBottom))
+                        {
+                            if ((blockRight >= charLeft && charLeft >= blockLeft) || (blockLeft <= charRight && charRight <= blockRight))
+                            {
+                                loseLife();
+                            }
+                        }
+                         // Checks hit block edges his char
+
+                        else if ((charBottom >= blockTop && blockTop >= charTop) || (charTop <= blockBottom && blockBottom <= charBottom))
+                        {
+                            if ((charRight >= blockLeft && blockLeft >= charLeft) || (charLeft <= blockRight && blockRight <= charRight))
+                            {
+                                loseLife();
+                            }
+                        }
+                    }
+
+                    for (var i = deletedWallBlock;i<numWallBlock;i++)
+                    {
+                        var block= document.getElementById("wallblock"+i);
+
+                        //Block property
+                        var blockLeft = parseInt(block.style.marginLeft);
+                        var blockTop = parseInt(block.style.marginTop);
+                        var blockRight = parseInt(block.style.marginLeft) + parseInt(block.style.width) ;
+                        var blockBottom = parseInt(block.style.marginTop) + parseInt(block.style.height);
+                        
+                        //Char property
+                        var charLeft = parseInt(walkingImg.style.left);
+                        var charTop = parseInt(walkingImg.style.top);
+                        var charRight = parseInt(walkingImg.style.left) + parseInt(walkingImg.style.width) ;
+                        var charBottom = parseInt(walkingImg.style.top) + parseInt(walkingImg.style.height);
+                        // Checks hit char edges his block
+                        if ((blockBottom >= charTop && charTop >= blockTop) || (blockTop <= charBottom && charBottom <= blockBottom))
+                        {
+                            if ((blockRight >= charLeft && charLeft >= blockLeft) || (blockLeft <= charRight && charRight <= blockRight))
+                            {
+                                loseLife();
+                            }
+                        }
+                         // Checks hit block edges his char
+
+                        else if ((charBottom >= blockTop && blockTop >= charTop) || (charTop <= blockBottom && blockBottom <= charBottom))
+                        {
+                            if ((charRight >= blockLeft && blockLeft >= charLeft) || (charLeft <= blockRight && blockRight <= charRight))
+                            {
+                                loseLife();
+                            }
+                        }
+                    }
+
+                    for (var i = deletedFollowBlock;i<numFollowBlock;i++)
+                    {
+                        var block= document.getElementById("followblock"+i);
+
+                        //Block property
+                        var blockLeft = parseInt(block.style.marginLeft);
+                        var blockTop = parseInt(block.style.marginTop);
+                        var blockRight = parseInt(block.style.marginLeft) + parseInt(block.style.width) ;
+                        var blockBottom = parseInt(block.style.marginTop) + parseInt(block.style.height);
+                        
+                        //Char property
+                        var charLeft = parseInt(walkingImg.style.left);
+                        var charTop = parseInt(walkingImg.style.top);
+                        var charRight = parseInt(walkingImg.style.left) + parseInt(walkingImg.style.width) ;
+                        var charBottom = parseInt(walkingImg.style.top) + parseInt(walkingImg.style.height);
+                        // Checks hit char edges his block
+                        if ((blockBottom >= charTop && charTop >= blockTop) || (blockTop <= charBottom && charBottom <= blockBottom))
+                        {
+                            if ((blockRight >= charLeft && charLeft >= blockLeft) || (blockLeft <= charRight && charRight <= blockRight))
+                            {
+                                loseLife();
+                            }
+                        }
+                         // Checks hit block edges his char
+
+                        else if ((charBottom >= blockTop && blockTop >= charTop) || (charTop <= blockBottom && blockBottom <= charBottom))
+                        {
+                            if ((charRight >= blockLeft && blockLeft >= charLeft) || (charLeft <= blockRight && blockRight <= charRight))
+                            {
+                                loseLife();
+                            }
+                        }
+                    }
+
+
+
+                }
+
+            }
+
+            function loseLife()
+            {
+                lives--;
+                document.getElementById("lives").innerHTML = "Lives: " + lives;
+
+                if (lives <= 0){
+					resetGame();
+                    removeAllBlock();
+
+                    alert("YOU DEAD SONNNNN");
+                }
+                else 
+                {
+                    //Let the character become invincible for 3 seconds in order to recover
+                    invincible = true;
+                    var faded = false
+
+                    flashingChar = setInterval(function()
+                    {
+                        if (faded)
+                        {
+                        document.getElementById("walk").style.opacity = "1";
+                        faded = !faded;
+                        }
+                        else
+                        {
+                        document.getElementById("walk").style.opacity = "0.5";
+                        faded = !faded;
+                        }
+                    },500)
+
+                    becomeVulnerable = setInterval(function()
+                                    {
+                                        invincible = false;
+                                        document.getElementById("walk").style.opacity = "1";
+                                        clearInterval(becomeVulnerable);
+                                        clearInterval(flashingChar);
+                                    },3000);
+                }
+            }
+
+            /* Animations and movements */
+            
+            function moveBackground()
+            { 
+                document.getElementById("gameboard").style.backgroundPosition = "0px " + backgroundValue + "px";
+            }
+    
+            </script>
+        
+    </head>
+    
+    <body>
+
+        <script src="http://cdn.kik.com/cards/0/cards.js"></script>
+        <script src="http://zeptojs.com/zepto.min.js"></script>
+        <script src="http://cdn.kik.com/app/1/app.js"></script> 
+
+        <!--<div class="app-page" data-page="home">
+            <div class="app-topbar"></div>
+            <div class="app-content">
+                    <div class="app-button" data-target="game">Go to Game</div>            
+            </div>
+        </div>-->
+
+            <script>
+            /* timers */
+            var timer;
+            var spawnRandomBlock;
+            var spawnWallBlock;
+            var spawnFollowBlock;
+            var moveingBlock;
+            var movingBackground;
+
+            /* variables */
+            var count = 0;
+            var movementDistance = 0;
+            var moving = false;
+            var highscore = 0;
+            var speed = 100;
+
+            var type = 0;
+            var numBlock = 0;
+            var numWallBlock = 0;
+            var numFollowBlock = 0;
+            var deletedBlock = 0;
+            var deletedWallBlock = 0;
+            var deletedFollowBlock = 0;
+
+            var backgroundValue = 0;
+            var filled = 0;
+            var started = false;
+            var blocksSpawnPoint = -10;
+
+            var lives = 0;
+            var bombs = 0;
+            var invincible  = false;
+            //All Elements being used
+            var walkingImg = document.getElementById("walk");
+
+            
+            //var localhost = "http://10.10.10.160:8888";
+            var localhost = "file:///C:/Users/KevinTse/Desktop/website-dir";
+            </script>
+			
+			<div id="game">
+
+                <div id="gameinfo">
+                    <p id="score">Score: 0</p>
+                    <p id="speed">Speed: 0</p>
+                    <p id="lives">Lives: 3</p>
+                    <p id="bombs">Bombs: 3</p>
+                    <p id="spawn">Spawn: -10</p>
+                </div>
+                
+                <div id="touch-me">
+                </div>
+                
+                
+                <div id="gameboard">
+                    <img id="walk" src="file:///C:/Users/KevinTse/Desktop/website-dir/images/PenguinFront.png">
+                    <script>
+
+                        var walkingImg = document.getElementById("walk");
+                        walkingImg.style.position="absolute";
+                        
+                        walkingImg.style.height = "25px";
+                        walkingImg.style.width = "25px";
+                        
+                        var winW = 0;;
+                        var winH = 0;
+                        
+                        winW = window.innerWidth;
+                        winH = window.innerHeight;
+                        walkingImg.style.top = ((winH*0.75)-25)+"px";
+                        walkingImg.style.left = ((winW*0.75/2)-12.5)+"px";
+                    </script>  
+
+                <div id="control">
+                    <div id="left"> </div>
+                    <div id="right"> </div>
+                    <div id="up"> </div>
+                    <div id="down"> </div>
+                </div>					
+                </div>
+            
+			</div>
+
+            <!-- All touch operations -->
+            
+            <script src="file:///C:/Users/KevinTse/Desktop/website-dir/touchy.js"></script>
+            <script>
+                Touchy.stopWindowBounce();
+                
+                var touchMe = document.getElementById('touch-me');
+                
+                Touchy(touchMe, true, function (hand, finger) {
+                       if (hand.fingers.length > 1) {
+                       
+                       return;
+                       }
+                       
+                       finger.on('start', function (point) {
+                                if (!started)
+                                {
+                                startGame();
+                                createRandomBlock();
+                                moveBlock();
+                                started = true;
+                                }
+								
+                                });
+                       
+                       finger.on('move', function (point) {
+                                                 
+                                 });
+                       
+                       finger.on('end'  , function (point) {
+
+                                 });
+                       
+                       });
+
+                var gameBoardtouch = document.getElementById('gameboard');
+
+                Touchy(gameBoardtouch, true, function (hand, finger) {
+                    //Uses bomb
+                    finger.on('start', function (point) {
+                            if (bombs > 0)
+                            {
+                                bombs--;
+                                gameboard.style.opacity = "0.1";
+                                removeAllBlock(); 
+
+
+                                flash = setInterval(function()
+                                {
+                                    gameboard.style.opacity = "1";
+                                    clearInterval(flash);
+                                }, 100);
+                            }
+
+                    finger.on('move', function (point) {
+
+                            });
+                       
+                    finger.on('end'  , function (point) {
+
+                            });
+                            
+                         });
+                });
+                
+                /* Movement Controls */
+
+                var upMove = document.getElementById('up');
+                
+                Touchy(upMove, true, function (hand, finger) {                   
+                    var up;
+                    finger.on('start', function (point){           
+                        up = setInterval(function()
+                        {       
+                                if(parseInt(walkingImg.style.top) >= 5) {
+                                    walkingImg.style.top  = parseInt(walkingImg.style.top) - 5 + "px";
+                                    checkCollision();
+                                }                                     
+                        },15);
+                                 
+                        });
+                       
+                       finger.on('end', function (point) {
+                            clearInterval(up);
+                        });
+                });
+                
+                var downMove = document.getElementById('down');
+                
+                Touchy(downMove, true, function (hand, finger) {                   
+                    var down;
+                    finger.on('start', function (point){
+                             
+                             
+                            down = setInterval(function()
+                                {
+                                    if(parseInt(walkingImg.style.top) + parseInt(walkingImg.style.height) <= window.innerHeight*0.75 - 5 )
+                                    {
+                                        walkingImg.style.top  = parseInt(walkingImg.style.top) + 5 + "px";
+                                        checkCollision();
+                                    }
+                                },15);
+                    });
+                   
+                   finger.on('end', function (point) {
+                             clearInterval(down);
+                             });
+                   });
+            
+                var leftMove = document.getElementById('left');
+                
+                Touchy(leftMove, true, function (hand, finger) {                   
+                    var left;
+                    finger.on('start', function (point){      
+                             left = setInterval(function()
+                                    {
+                                        if(parseInt(walkingImg.style.left) >= 5)
+                                        {
+											walkingImg.src = localhost + "/images/PenguinSideLeft.png";
+                                            walkingImg.style.left  = parseInt(walkingImg.style.left) - 5 +"px";
+                                            checkCollision();
+                                        }
+                                    },15);
+                             });
+                       
+                    finger.on('end', function (point) {
+							walkingImg.src = localhost + "/images/PenguinFront.png";
+                            clearInterval(left);
+                            });
+                       });
+                
+                var rightMove = document.getElementById('right');
+                
+                Touchy(rightMove, true, function (hand, finger) {
+                    var right;
+                    finger.on('start', function (point){
+                            console.log("Touch start Right");
+
+                            right = setInterval(function()
+                                {
+                                    if (parseInt(walkingImg.style.left) + parseInt(walkingImg.style.width) <= window.innerWidth*0.75 -5)
+                                    {
+										walkingImg.src = localhost + "/images/PenguinSideRight.png";
+                                        walkingImg.style.left  = parseInt(walkingImg.style.left) + 5 +"px";
+                                        checkCollision();
+                                    }
+                                },15);
+                            });
+                   
+                   finger.on('end', function (point) {
+                    console.log("Touch end Right");
+							walkingImg.src = localhost + "/images/PenguinFront.png";
+
+                            clearInterval(right);
+                            });
+                   });
+            
+            </script>
+        
+    </body>
+</html>
