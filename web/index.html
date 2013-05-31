@@ -92,18 +92,20 @@
             function typeBlock()
             {
                 var previoustype = type;
-                if (switchBlock > 1000)
+                document.getElementById("test").innerHTML = switchBlock + " " + type;
+
+                if (switchBlock > 100)
                 {
                     switchBlock-=100;
-                    if (count > 100)
+                    if (count > 1000)
                     {
                         type = Math.floor(Math.random()*6);
-                    }
+                    } 
                     else
                     {
                         type = Math.floor(Math.random()*3);
                     }
-                }
+                } 
                 if (count > 1000)
                 {
                     type = Math.random()*5;
@@ -336,16 +338,15 @@
 
                         if (distanceToMoveVertically < 0)
                         {
-                            if (block.style.backgroundImage != "url(/img/EvilPenguinUp.png)")
+                            if (block.style.backgroundImage.indexOf("EvilPenguinUp.png") < 0 )
                             {
                                 block.style.backgroundImage = "url(/img/EvilPenguinUp.png)";
-
-                            }
+                            }        
 
                         }
                         else 
                         {
-                            if (block.style.backgroundImage != "url(/img/EvilPenguinDown.png)")
+                            if (block.style.backgroundImage.indexOf("EvilPenguinDown.png") < 0 )
                             {
                                 block.style.backgroundImage = "url(/img/EvilPenguinDown.png)";
                             }                         
@@ -710,7 +711,7 @@
                     <p id="score">Score: 0</p>
                     <p id="lives">Lives: 3</p>
                     <p id="bombs">Bombs: 3</p>
-
+                    <p id="test">test</p>
                     <div id="touch-me" align="center" style="font-family:arial;color:white;font-size:20px;">
                         <p id="presstoslide"> PRESS TO SLIDE! </p>
                     </div>
@@ -895,18 +896,20 @@
                 {
 				var p = $(page);
 
-				
-				p.find("#statshighscore").text("Highscore: " + localStorage.sps_high_score);
-				p.find("#lifetimescore").text("Lifetime Score: " + localStorage.sps_lifetime_score);
-				p.find("#numgames").text("Number of Game Played: " + localStorage.sps_number_game);
+				if (localStorage.sps_number_game)
+                {
+                    p.find("#statshighscore").text("Highscore: " + localStorage.sps_high_score);
+                    p.find("#lifetimescore").text("Lifetime Score: " + localStorage.sps_lifetime_score);
+                    p.find("#numgames").text("Number of Game Played: " + localStorage.sps_number_game);
 
-				p.find("#numsnowballs").text("Number of Snowballs Dodged: " + localStorage.sps_num_snowballs);
-				p.find("#numwalls").text("Number of Wall Dodged: " + localStorage.sps_num_walls);
-				p.find("#numevilpenguins").text("Number of Evil Penguin Dodged: " + localStorage.sps_num_evil_penguin);
-				
-				p.find("#numsnowballshit").text("Number of Snowballs Hit: " + localStorage.sps_num_snowballs_hit);
-				p.find("#numwallshit").text("Number of Walls Hit: " + localStorage.sps_num_walls_hit);
-				p.find("#numevilpenguinshit").text("Number of Evil Penguins Hit: " + localStorage.sps_num_evil_penguin_hit);
+                    p.find("#numsnowballs").text("Number of Snowballs Dodged: " + localStorage.sps_num_snowballs);
+                    p.find("#numwalls").text("Number of Wall Dodged: " + localStorage.sps_num_walls);
+                    p.find("#numevilpenguins").text("Number of Evil Penguin Dodged: " + localStorage.sps_num_evil_penguin);
+                    
+                    p.find("#numsnowballshit").text("Number of Snowballs Hit: " + localStorage.sps_num_snowballs_hit);
+                    p.find("#numwallshit").text("Number of Walls Hit: " + localStorage.sps_num_walls_hit);
+                    p.find("#numevilpenguinshit").text("Number of Evil Penguins Hit: " + localStorage.sps_num_evil_penguin_hit);
+                } 
 	
 				});
 			
